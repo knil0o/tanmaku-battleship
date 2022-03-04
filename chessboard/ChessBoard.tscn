@@ -9,8 +9,12 @@
 [node name="ChessBoard" type="TileMap"]
 tile_set = ExtResource( 1 )
 cell_size = Vector2( 16, 16 )
+cell_y_sort = true
 format = 1
 script = ExtResource( 2 )
+__meta__ = {
+"_editor_description_": "棋盘的场景"
+}
 ship_scene = ExtResource( 3 )
 attacked_sea_scene = ExtResource( 4 )
 sea_scene = ExtResource( 5 )
