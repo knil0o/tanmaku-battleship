@@ -122,4 +122,4 @@ func pos_into_cell(pos: Vector2):
 	
 #返回一个0-9的随机位置
 func rand_pos():
-	return Vector2(randi()%10+1 - 4, randi()%10+1 - 4)
+	return Vector2(randi()%10+1 - 1, randi()%10+1 - 1)
