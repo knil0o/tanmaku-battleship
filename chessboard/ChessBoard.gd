@@ -12,10 +12,10 @@ var attacked_ground = 2
 var tile_size = 16
 #所有船的大小
 var ship_yard = [
-	Vector2(1,1), Vector2(1,1), Vector2(1,1), Vector2(1,1),
-	Vector2(2,1), Vector2(1,2), Vector2(2,1),
+	Vector2(1,1),  Vector2(1,1),
+	Vector2(2,1), Vector2(1,2),
 	Vector2(1,3), Vector2(3,1),
-	Vector2(1, 4)
+	Vector2(1,4)
 ]
 #放置的数据
 var placed = []
@@ -23,6 +23,8 @@ var placed = []
 var ship_positions = []
 var lock_positions = []
 func _ready():
+
+	
 #	for cell in get_used_cells():
 #		print("x: "+ str(cell.x) + "y: " + str(cell.y))
 	
@@ -40,8 +42,9 @@ func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		var mouse_pos = event.position - position
 		var tile_pos = world_to_map(mouse_pos)
-		var ats = attacked_sea_scene.instance()
-		set_cellv(world_to_map(mouse_pos), 2)
+		if(tile_pos.x <= chess_board_scale.x && tile_pos.y <= chess_board_scale.y && tile_pos.x >= 0 && tile_pos.y >= 0):
+			set_cellv(world_to_map(mouse_pos), 2)
+	
 	
 func _process(delta):
 	pass
@@ -49,8 +52,6 @@ func _process(delta):
 func place_ships(ships):
 	for ship_size in ships:
 		place_one(ship_size, rand_pos())
-		pass
-	pass
 
 #增加一个船位置
 func place_one(ship: Vector2, pos: Vector2):
@@ -82,19 +83,25 @@ func add_surround_lock(pos: Vector2):
 		pos + Vector2.LEFT,
 		pos + Vector2.RIGHT,
 		pos + Vector2.UP,
-		pos + Vector2.DOWN
+		pos + Vector2.DOWN,
+		pos + Vector2(1,1),
+		pos + Vector2(-1,1),
+		pos + Vector2(1,-1),
+		pos + Vector2(-1,-1),
 	]
 	lock_positions.append_array(locks)	
 # 查询船是否能放置在这里,如果超过范围就减少
 func try_place(ship: Vector2, try_pos: Vector2):
+	#重要！否则不会随机生成
+	randomize()
 	var pos_origin = Vector2(try_pos.x, try_pos.y)	
 	while try_pos.x < (ship.x + pos_origin.x):
 		while try_pos.y < (ship.y + pos_origin.y):
 			for lock_pos in lock_positions:
 				#不能放在限制位置也不能超过棋盘
 				var out_of_range = try_pos.x > chess_board_scale.x || try_pos.y > chess_board_scale.y
-				print("out of range:" +str(try_pos))
-				if lock_pos.x == try_pos.x && lock_pos.y == try_pos.y || out_of_range :
+				#print("out of range:" +str(try_pos))
+				if (lock_pos.x == try_pos.x && lock_pos.y == try_pos.y) || out_of_range :
 					print("ship cannot placed in " + str(try_pos))
 					return false
 			try_pos.y += 1
@@ -118,4 +125,4 @@ func pos_into_cell(pos: Vector2):
 	
 #返回一个0-9的随机位置
 func rand_pos():
-	return Vector2(randi()%10+1 - 1, randi()%10+1 - 1)
+	return Vector2(randi()%9, randi()%9)
