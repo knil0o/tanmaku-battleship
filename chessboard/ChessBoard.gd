@@ -32,9 +32,7 @@ func _ready():
 	place_tile(chess_board_scale)
 #	show_ship(ship, 1, 1, Vector2(5,2))
 	place_ships(ship_yard)
-	
 	print("ship_positions:" + str(ship_positions))
-
 
 
 #收到点击事件
@@ -62,6 +60,10 @@ func place_one(ship: Vector2, pos: Vector2):
 	while !can_deploy:
 		pos = rand_pos()
 		can_deploy = try_place(ship, pos)
+		retry = retry -1
+		if(retry < 0):
+			#重试次数过多，重新加载当前场景
+			get_tree().reload_current_scene()
 	
 	
 	var pos_origin = Vector2(pos.x, pos.y)
@@ -69,7 +71,6 @@ func place_one(ship: Vector2, pos: Vector2):
 		while pos.y < (ship.y + pos_origin.y):
 			var draw_pos= Vector2(pos.x, pos.y)
 			print("ship placed in " + str(draw_pos))
-			set_cellv(draw_pos, 0)
 			ship_positions.append(draw_pos)
 			add_surround_lock(draw_pos)
 			pos.y += 1
@@ -92,9 +93,8 @@ func add_surround_lock(pos: Vector2):
 	lock_positions.append_array(locks)	
 # 查询船是否能放置在这里,如果超过范围就减少
 func try_place(ship: Vector2, try_pos: Vector2):
-	#重要！否则不会随机生成
-	randomize()
-	var pos_origin = Vector2(try_pos.x, try_pos.y)	
+
+	var pos_origin = Vector2(try_pos.x, try_pos.y)
 	while try_pos.x < (ship.x + pos_origin.x):
 		while try_pos.y < (ship.y + pos_origin.y):
 			for lock_pos in lock_positions:
@@ -125,4 +125,6 @@ func pos_into_cell(pos: Vector2):
 	
 #返回一个0-9的随机位置
 func rand_pos():
+	#重要！否则不会随机生成
+	randomize()
 	return Vector2(randi()%9, randi()%9)
