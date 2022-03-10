@@ -61,10 +61,6 @@ func place_one(ship: Vector2, pos: Vector2):
 	while !can_deploy:
 		pos = rand_pos()
 		can_deploy = try_place(ship, pos)
-		retry -=1
-		#超过重试还找不到就不放置了
-		if retry < 0:
-			return
 	
 	
 	var pos_origin = Vector2(pos.x, pos.y)
@@ -96,7 +92,7 @@ func try_place(ship: Vector2, try_pos: Vector2):
 		while try_pos.y < (ship.y + pos_origin.y):
 			for lock_pos in lock_positions:
 				#不能放在限制位置也不能超过棋盘
-				var out_of_range = try_pos.x > chess_board_scale.x && try_pos.y > chess_board_scale.y
+				var out_of_range = try_pos.x > chess_board_scale.x || try_pos.y > chess_board_scale.y
 				print("out of range:" +str(try_pos))
 				if lock_pos.x == try_pos.x && lock_pos.y == try_pos.y || out_of_range :
 					print("ship cannot placed in " + str(try_pos))
@@ -111,8 +107,8 @@ func show_ship(ship, scale_x, scale_y, map_pos: Vector2):
 	add_child(ship)
 	ship.position = pos_into_cell(map_to_world(map_pos))
 func place_tile(chess_board_scale):
-	for x in chess_board_scale.x:
-		for y in chess_board_scale.y:
+	for x in chess_board_scale.x +1:
+		for y in chess_board_scale.y +1:
 			set_cell(x, y, 1)
 	
 func pos_into_cell(pos: Vector2):
