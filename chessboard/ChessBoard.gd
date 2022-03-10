@@ -22,6 +22,7 @@ var placed = []
 
 var ship_positions = []
 var lock_positions = []
+var hit_positions = []
 func _ready():
 
 	
@@ -34,6 +35,24 @@ func _ready():
 	place_ships(ship_yard)
 	print("ship_positions:" + str(ship_positions))
 
+#攻击一个位置范围,返回剩余位置
+func hit(hit_pos: Vector2):
+	for ship_pos in ship_positions:
+		if(ship_pos == hit_pos):
+			#击中了
+			ship_positions.erase(ship_pos)
+			print("now has" + str(ship_positions))
+			set_cellv(hit_pos, 0)
+			return ship_positions
+		elif(!hit_positions.has(hit_pos)):
+			set_cellv(hit_pos, 2)
+			hit_positions.append(hit_pos)
+		
+func get_ship_prositions():
+	return ship_positions
+
+func has_ship():
+	return get_ship_prositions().size() > 0
 
 #收到点击事件
 func _unhandled_input(event):
@@ -41,7 +60,7 @@ func _unhandled_input(event):
 		var mouse_pos = event.position - position
 		var tile_pos = world_to_map(mouse_pos)
 		if(tile_pos.x <= chess_board_scale.x && tile_pos.y <= chess_board_scale.y && tile_pos.x >= 0 && tile_pos.y >= 0):
-			set_cellv(world_to_map(mouse_pos), 2)
+			hit(world_to_map(mouse_pos))
 	
 	
 func _process(delta):
@@ -127,4 +146,5 @@ func pos_into_cell(pos: Vector2):
 func rand_pos():
 	#重要！否则不会随机生成
 	randomize()
-	return Vector2(randi()%9, randi()%9)
+	return Vector2(randi()%10, randi()%10)
+	
