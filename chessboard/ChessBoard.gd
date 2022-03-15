@@ -23,6 +23,10 @@ var placed = []
 var ship_positions = []
 var lock_positions = []
 var hit_positions = []
+
+func set_player_info(message: String):
+	$PlayerInfo.text = message
+
 func _ready():
 
 	
@@ -41,7 +45,7 @@ func hit(hit_pos: Vector2):
 		if(ship_pos == hit_pos):
 			#击中了
 			ship_positions.erase(ship_pos)
-			print("now has" + str(ship_positions))
+			#print("now has" + str(ship_positions))
 			set_cellv(hit_pos, 0)
 			return ship_positions
 		elif(!hit_positions.has(hit_pos)):
@@ -89,7 +93,7 @@ func place_one(ship: Vector2, pos: Vector2):
 	while pos.x < (ship.x + pos_origin.x):
 		while pos.y < (ship.y + pos_origin.y):
 			var draw_pos= Vector2(pos.x, pos.y)
-			print("ship placed in " + str(draw_pos))
+			#print("ship placed in " + str(draw_pos))
 			ship_positions.append(draw_pos)
 			add_surround_lock(draw_pos)
 			pos.y += 1
@@ -121,7 +125,7 @@ func try_place(ship: Vector2, try_pos: Vector2):
 				var out_of_range = try_pos.x > chess_board_scale.x || try_pos.y > chess_board_scale.y
 				#print("out of range:" +str(try_pos))
 				if (lock_pos.x == try_pos.x && lock_pos.y == try_pos.y) || out_of_range :
-					print("ship cannot placed in " + str(try_pos))
+					#print("ship cannot placed in " + str(try_pos))
 					return false
 			try_pos.y += 1
 		try_pos.y = pos_origin.y

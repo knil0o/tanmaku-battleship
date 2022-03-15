@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://chessboard/ChessBoard.tres" type="TileSet" id=1]
 [ext_resource path="res://chessboard/ChessBoard.gd" type="Script" id=2]
 [ext_resource path="res://ship/Ship1x1.tscn" type="PackedScene" id=3]
 [ext_resource path="res://chessboard/SeaAttacked.tscn" type="PackedScene" id=4]
 [ext_resource path="res://chessboard/Sea.tscn" type="PackedScene" id=5]
+[ext_resource path="res://font/chinese.tres" type="DynamicFont" id=6]
 
 [node name="ChessBoard" type="TileMap"]
 tile_set = ExtResource( 1 )
@@ -19,3 +20,10 @@ __meta__ = {
 ship_scene = ExtResource( 3 )
 attacked_sea_scene = ExtResource( 4 )
 sea_scene = ExtResource( 5 )
+
+[node name="PlayerInfo" type="Label" parent="."]
+margin_top = 240.0
+margin_right = 319.0
+margin_bottom = 265.0
+custom_fonts/font = ExtResource( 6 )
+align = 1

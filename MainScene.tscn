@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://MainScene.gd" type="Script" id=1]
 [ext_resource path="res://Controller/BiliController.tscn" type="PackedScene" id=2]
@@ -6,12 +6,16 @@
 [ext_resource path="res://chessboard/ChessBoard.tscn" type="PackedScene" id=4]
 [ext_resource path="res://HUD/HUD.tscn" type="PackedScene" id=5]
 
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 88, 80, 0, 0, 0, 0, 544, 96, 0, 0, 0, 0, 1032, 88, 0, 0, 0, 0, 1104, 536, 0, 0, 0, 0, 664, 616, 0, 0, 0, 0, 208, 552, 0, 0, 0, 0, 48, 480, 0, 0, 0, 0, 88, 80 )
+}
+
 [node name="Node" type="Node"]
 script = ExtResource( 1 )
 chess_board_scene = ExtResource( 4 )
 player_scene = ExtResource( 3 )
 controller = ExtResource( 2 )
-start_wait_time = 1000
 
 [node name="WaitPlayerTimer" type="Timer" parent="." groups=["start"]]
 autostart = true
@@ -21,7 +25,13 @@ autostart = true
 [node name="TurnTimer" type="Timer" parent="."]
 
 [node name="WsController" parent="." instance=ExtResource( 2 )]
-room_url = "https://live.bilibili.com/6249349?visit_id=5237n1x3nfo0"
+
+[node name="Path" type="Path2D" parent="."]
+curve = SubResource( 1 )
+
+[node name="Follow" type="PathFollow2D" parent="Path"]
+position = Vector2( 88, 80 )
+rotation = 0.0350735
 
 [connection signal="timeout" from="WaitPlayerTimer" to="." method="_on_WaitPlayerTimer_timeout"]
 [connection signal="timeout" from="TurnTimer" to="." method="_on_TurnTimer_timeout"]

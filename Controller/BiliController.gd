@@ -1,6 +1,6 @@
 extends Node
 # The URL we will connect to
-export(String) var room_url = "https://live.bilibili.com/23848025?hotRank=0&session_id=a57af09ab51d3aec8885cb9fcda58fdf_50152752-3361-46A7-82B8-FF0419C1CC36&visit_id=3cnd699zwk80"
+export(String) var room_url = "http://live.bilibili.com/6249349"
 export(String) var websocket_url = "ws://localhost:7852/"
 
 # Our WebSocketClient instance
@@ -9,9 +9,9 @@ var last_msg_time
 var expire_s = 10
 
 signal on_msg_expire
-signal on_hit_pos(player_name, pos)
+signal on_hit_pos(player_name, pos, target)
 signal on_player_in(player_name)
-
+signal on_error(message)
 func _ready():
 	# Connect base signals to get notified of connection open, close, and errors.
 	_client.connect("connection_closed", self, "_closed")
@@ -42,14 +42,42 @@ func _connected(proto = ""):
 	# You MUST always use get_peer(1).put_packet to send data to server,
 	# and not put_packet directly when not using the MultiplayerAPI.
 	_client.get_peer(1).put_packet("Test packet".to_utf8())
-
+#弹幕发送“加入”加入本轮游戏，回合中发送玩家编号和棋盘坐标攻击（如："1，j,8"，攻击编号为1的玩家的坐标为j,8的格子）忽略大小写
 func _on_data():
+	
 	last_msg_time = OS.get_time()
 	var json = _client.get_peer(1).get_packet().get_string_from_utf8();
-	print("Got data from server: ", json)
+	print("Got data from server: {}, {}", json , OS.get_datetime())
 	var dict = JSON.parse(json).get_result()
-	if(dict["content"] == "加入"):
-		emit_signal("on_player_in", dict["name"])
+	var error
+	var content = dict["content"].to_lower().strip_escapes()
+	var player_name = dict["name"]
+	var is_pos = content.find(",") != -1 || content.find("，") != -1
+
+	if(content == "加入"):
+		emit_signal("on_player_in", player_name)
+	elif(is_pos):
+		var pos_arr = content.split(",")
+		if(pos_arr.size() < 3):
+			pos_arr = content.split("，")
+		if(pos_arr.size() < 3):
+			error = player_name + "输入" + content+"无法执行"
+			emit_signal("on_error", error)
+			return
+		var player_index = pos_arr[0]
+		var pos_y = max(int(pos_arr[2]) -1, 0)
+		var pos_char = pos_arr[1]
+		var pos_x = char_to_pos(pos_char)
+		var real_pos = Vector2(pos_x, pos_y)
+		print("转化后的坐标 ", real_pos)
+		emit_signal("on_hit_pos", player_name, real_pos, -1)
+		
+func char_to_pos(aj: String):
+	var array = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+	for chara in array:
+		if chara == aj:
+			return array.find(chara)
+	
 
 func _process(delta):
 	# Call this in _process or _physics_process. Data transfer, and signals
