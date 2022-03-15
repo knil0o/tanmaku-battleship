@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://font/chinese.tres" type="DynamicFont" id=1]
+[ext_resource path="res://HUD/HUD.gd" type="Script" id=2]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = ExtResource( 2 )
+
+[node name="Manual" type="Label" parent="." groups=["game"]]
+light_mask = 3
+margin_top = -1.0
+margin_right = 99.0
+margin_bottom = 50.0
+custom_fonts/font = ExtResource( 1 )
+text = "游戏介绍:
+输入坐标攻击输入坐标攻击输入
+坐标攻击输入坐标攻击输入坐标攻击
+输入坐标攻击输入坐标攻击
+输入坐标攻击输入坐标攻击"
+
+[node name="TimerText" type="Label" parent="."]
+margin_left = 94.0
+margin_top = 3.0
+margin_right = 221.0
+margin_bottom = 18.0
+custom_fonts/font = ExtResource( 1 )
+align = 1
+valign = 1
+
+[node name="CurrentPlayer" type="Label" parent="."]
+margin_left = 1.0
+margin_top = 135.0
+margin_right = 45.0
+margin_bottom = 149.0
+custom_fonts/font = ExtResource( 1 )
+
+[node name="PlayerInfo" type="Label" parent="CurrentPlayer" groups=["game"]]
+margin_left = 1.0
+margin_top = 14.0
+margin_right = 46.0
+margin_bottom = 105.0
+custom_fonts/font = ExtResource( 1 )
