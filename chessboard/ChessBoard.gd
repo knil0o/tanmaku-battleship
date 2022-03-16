@@ -2,6 +2,13 @@ extends TileMap
 export(PackedScene) var ship_scene
 export(PackedScene) var attacked_sea_scene
 export(PackedScene) var sea_scene
+#玩家的名字
+var player_name
+#当前的状态
+var status
+var player_info = ""
+#玩家的序号
+var index: int
 #棋盘大小
 var chess_board_scale = Vector2(9, 9)
 #普通海域tile id
@@ -10,6 +17,7 @@ var normal_ground = 1
 var attacked_ground = 2
 #单个tile大小
 var tile_size = 16
+var Player: Player
 #所有船的大小
 var ship_yard = [
 	Vector2(1,1),  Vector2(1,1),
@@ -24,12 +32,31 @@ var ship_positions = []
 var lock_positions = []
 var hit_positions = []
 
-func set_player_info(message: String):
-	$PlayerInfo.text = message
-
-func _ready():
-
+#设置玩家
+func set_player_info(player: Dictionary):
 	
+	print("global:" + str(Player))
+	player_name = player.get(Player.Name)
+	status = player.get(Player.Status)
+	index = player.get(Player.Index, -1)
+func show_player():
+	var extra = ""
+	if status == Player.PlayerStatus.PLAYING:
+		extra = "陷入沉思"
+	elif status == Player.PlayerStatus.DEFEATED:
+		extra = "已经寄了"
+	else:
+		extra = "暗中观察"
+	var base = str(index) + "号玩家" + player_name
+	if(extra.length() > 0):
+		base = base + "【"+ extra +"】"
+	
+	$PlayerInfo.text = base
+	
+	
+func _ready():
+	if !Player:
+		Player = get_node("/root/Player")
 #	for cell in get_used_cells():
 #		print("x: "+ str(cell.x) + "y: " + str(cell.y))
 	
@@ -41,12 +68,15 @@ func _ready():
 
 #攻击一个位置范围,返回剩余位置
 func hit(hit_pos: Vector2):
+	if Global.status == Global.WorldStatus.END:
+		return
 	for ship_pos in ship_positions:
 		if(ship_pos == hit_pos):
 			#击中了
 			ship_positions.erase(ship_pos)
 			#print("now has" + str(ship_positions))
 			set_cellv(hit_pos, 0)
+			try_defeat()
 			return ship_positions
 		elif(!hit_positions.has(hit_pos)):
 			set_cellv(hit_pos, 2)
@@ -56,7 +86,12 @@ func get_ship_prositions():
 	return ship_positions
 
 func has_ship():
-	return get_ship_prositions().size() > 0
+	return get_ship_prositions().size() > 0 && Global.status == Global.WorldStatus.PLAYING
+
+func try_defeat():
+	if(!has_ship()):
+		print(index, "淘汰", name)
+		status = Player.PlayerStatus.DEFEATED
 
 #收到点击事件
 func _unhandled_input(event):
@@ -68,6 +103,7 @@ func _unhandled_input(event):
 	
 	
 func _process(delta):
+	show_player()
 	pass
 
 func place_ships(ships):

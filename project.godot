@@ -14,6 +14,11 @@ config/name="Battleship"
 run/main_scene="res://MainScene.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+Player="*res://player/Player.gd"
+Global="*res://World.gd"
+
 [display]
 
 window/size/width=1280

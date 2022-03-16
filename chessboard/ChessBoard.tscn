@@ -22,8 +22,9 @@ attacked_sea_scene = ExtResource( 4 )
 sea_scene = ExtResource( 5 )
 
 [node name="PlayerInfo" type="Label" parent="."]
-margin_top = 240.0
-margin_right = 319.0
-margin_bottom = 265.0
+margin_left = 21.0
+margin_top = 159.0
+margin_right = 138.0
+margin_bottom = 184.0
 custom_fonts/font = ExtResource( 6 )
 align = 1

@@ -6,6 +6,7 @@ extends CanvasLayer
 # var b = "text"
 var player_head_line = "当前玩家:"
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$CurrentPlayer/PlayerInfo.text = "加入的玩家\n"
@@ -19,10 +20,11 @@ func set_wait_start_second(second: int):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
-func set_players(players: PoolStringArray):
-	for player_name in players:
-		add_player(player_name)
-func set_current_player(player_name: String):
-	$CurrentPlayer.text = player_head_line + player_name
-func add_player(player: String):
-	$CurrentPlayer/PlayerInfo.text +=  player +"\n"
+func set_current_player(player):
+	$CurrentPlayer.text = player_head_line + player.player_name
+
+func show_players():
+	var list ="加入的玩家：\n"
+	for player in Player.players:
+		list += player.player_name +"\n"
+	$CurrentPlayer/PlayerInfo.text = list
