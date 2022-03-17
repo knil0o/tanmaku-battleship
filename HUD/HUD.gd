@@ -26,5 +26,16 @@ func set_current_player(player):
 func show_players():
 	var list ="加入的玩家：\n"
 	for player in Player.players:
+		if !is_instance_valid(player):
+			return
 		list += player.player_name +"\n"
 	$CurrentPlayer/PlayerInfo.text = list
+func _process(delta):
+	var status = Global.status
+	var world = Global.WorldStatus
+	if status == world.END:
+		get_tree().call_group("start", "queue_free")
+		get_tree().call_group("game", "queue_free")
+		$GameOver.text = "游戏结束，获胜者是：" + (Player.get_players()[0]).player_name
+	else:
+		show_players()

@@ -7,3 +7,5 @@ enum WorldStatus {
 	END
 	
 }
+func clear():
+	status = WorldStatus.WAITING_FOR_GAMER

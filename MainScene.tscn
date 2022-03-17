@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://MainScene.gd" type="Script" id=1]
 [ext_resource path="res://Controller/BiliController.tscn" type="PackedScene" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://player/Player.gd" type="Script" id=6]
 [ext_resource path="res://images/1x1ship.png" type="Texture" id=7]
 [ext_resource path="res://ship/1x1ship_single.png" type="Texture" id=8]
+[ext_resource path="res://Controller/BotController.tscn" type="PackedScene" id=9]
 
 [sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 7 )
@@ -73,6 +74,7 @@ script = ExtResource( 1 )
 chess_board_scene = ExtResource( 4 )
 player_scene = SubResource( 9 )
 controller = ExtResource( 2 )
+start_wait_time = 2
 cheess_board_offset = 400.0
 
 [node name="WaitPlayerTimer" type="Timer" parent="." groups=["start"]]
@@ -92,7 +94,10 @@ curve = SubResource( 10 )
 position = Vector2( 144, 128 )
 rotation = -0.810841
 
+[node name="BotController" parent="." instance=ExtResource( 9 )]
+
 [connection signal="timeout" from="WaitPlayerTimer" to="." method="_on_WaitPlayerTimer_timeout"]
 [connection signal="timeout" from="TurnTimer" to="." method="_on_TurnTimer_timeout"]
 [connection signal="on_hit_pos" from="WsController" to="." method="_on_WsController_on_hit_pos"]
 [connection signal="on_player_in" from="WsController" to="." method="_on_WsController_on_player_in"]
+[connection signal="on_bot_hit" from="BotController" to="." method="_on_BotController_on_bot_hit"]

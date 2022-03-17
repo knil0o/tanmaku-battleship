@@ -52,32 +52,36 @@ func _on_data():
 	var error
 	var content = dict["content"].to_lower().strip_escapes()
 	var player_name = dict["name"]
-	var is_pos = content.find(",") != -1 || content.find("，") != -1
+	content = content.replace("，", ",")
+	
+	var is_pos = content.find(",") != -1
 
-	if(content == "加入"):
+	if(content == "加入" || content == "jiaru"):
 		emit_signal("on_player_in", player_name)
 	elif(is_pos):
 		var pos_arr = content.split(",")
 		if(pos_arr.size() < 3):
-			pos_arr = content.split("，")
-		if(pos_arr.size() < 3):
-			error = player_name + "输入" + content+"无法执行"
-			emit_signal("on_error", error)
 			return
-		var player_index = pos_arr[0]
+		var player_index = int(pos_arr[0])
+		if (!pos_arr[2].is_valid_integer()):
+			print("y坐标输入错误", pos_arr[2])
+			return
+		
 		var pos_y = max(int(pos_arr[2]) -1, 0)
 		var pos_char = pos_arr[1]
 		var pos_x = char_to_pos(pos_char)
+		if (typeof(pos_x) != TYPE_INT):
+			print("x坐标输入错误", typeof(pos_x), "!=", TYPE_INT)
+			return
 		var real_pos = Vector2(pos_x, pos_y)
 		print("转化后的坐标 ", real_pos)
-		emit_signal("on_hit_pos", player_name, real_pos, -1)
+		emit_signal("on_hit_pos", player_name, real_pos, player_index)
 		
 func char_to_pos(aj: String):
 	var array = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
 	for chara in array:
 		if chara == aj:
 			return array.find(chara)
-	
 
 func _process(delta):
 	# Call this in _process or _physics_process. Data transfer, and signals

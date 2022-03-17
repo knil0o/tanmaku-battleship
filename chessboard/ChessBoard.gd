@@ -9,6 +9,8 @@ var status
 var player_info = ""
 #玩家的序号
 var index: int
+#玩家是否是机器
+var is_bot = false
 #棋盘大小
 var chess_board_scale = Vector2(9, 9)
 #普通海域tile id
@@ -17,7 +19,6 @@ var normal_ground = 1
 var attacked_ground = 2
 #单个tile大小
 var tile_size = 16
-var Player: Player
 #所有船的大小
 var ship_yard = [
 	Vector2(1,1),  Vector2(1,1),
@@ -26,12 +27,31 @@ var ship_yard = [
 	Vector2(1,4)
 ]
 #放置的数据
-var placed = []
-
 var ship_positions = []
+#不能放置的区域
 var lock_positions = []
+#击中的区域
 var hit_positions = []
 
+
+#检查区域是否被打过了
+func is_pos_hit(pos: Vector2):
+	return hit_positions.has(pos)
+func get_surrounds(pos: Vector2):
+	var surrounds = [
+		Vector2(max(0, pos.x - 1), min(chess_board_scale.y, pos.y + 1)),
+		Vector2(max(0, pos.x - 1), pos.y),
+		Vector2(max(0, pos.x - 1), max(0, pos.y - 1)),
+		Vector2(pos.x, max(0, pos.y - 1)),
+		Vector2(max(0, pos.x - 1), min(chess_board_scale.y, pos.y + 1)),
+		Vector2(min(chess_board_scale.x, pos.x + 1), pos.y),
+		Vector2(min(chess_board_scale.x, pos.x + 1), min(chess_board_scale.y, pos.y + 1)),
+		Vector2(pos.x, min(chess_board_scale.y, pos.y + 1)),
+	]
+	for xy in surrounds:
+		if is_pos_hit(xy):
+			surrounds.erase(xy)
+	return surrounds
 #设置玩家
 func set_player_info(player: Dictionary):
 	
@@ -39,6 +59,7 @@ func set_player_info(player: Dictionary):
 	player_name = player.get(Player.Name)
 	status = player.get(Player.Status)
 	index = player.get(Player.Index, -1)
+	is_bot = player.get(Player.IsBot, false)
 func show_player():
 	var extra = ""
 	if status == Player.PlayerStatus.PLAYING:
@@ -55,8 +76,6 @@ func show_player():
 	
 	
 func _ready():
-	if !Player:
-		Player = get_node("/root/Player")
 #	for cell in get_used_cells():
 #		print("x: "+ str(cell.x) + "y: " + str(cell.y))
 	
@@ -69,7 +88,7 @@ func _ready():
 #攻击一个位置范围,返回剩余位置
 func hit(hit_pos: Vector2):
 	if Global.status == Global.WorldStatus.END:
-		return
+		return false
 	for ship_pos in ship_positions:
 		if(ship_pos == hit_pos):
 			#击中了
@@ -77,11 +96,11 @@ func hit(hit_pos: Vector2):
 			#print("now has" + str(ship_positions))
 			set_cellv(hit_pos, 0)
 			try_defeat()
-			return ship_positions
+			return true
 		elif(!hit_positions.has(hit_pos)):
 			set_cellv(hit_pos, 2)
 			hit_positions.append(hit_pos)
-		
+	return false	
 func get_ship_prositions():
 	return ship_positions
 

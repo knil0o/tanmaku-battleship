@@ -1,5 +1,6 @@
 extends Node
 #定义玩家的信息
+#WAITING 待机 ,PLAYING 回合中, 被击败 DEFEATED
 enum PlayerStatus {WAITING, PLAYING, DEFEATED}
 var players = []
 #上一次操作的玩家
@@ -7,6 +8,7 @@ var operate_player: int = 0
 var Status: String = "status"
 var Index: String = "index"
 var Name: String = "name"
+var IsBot: String = "is_bot"
 
 #用来传参的用户字典,这里初始化一个默认值
 var player_payload = {
@@ -19,14 +21,36 @@ func add_player(player):
 func erase_by_index(index: int):
 	for player in players:
 		if(player.index == index):
-			players.erase(player)
+			player.status = PlayerStatus.DEFEATED
 func erase_defeated():
 	for player in players:
 		if(player.status == PlayerStatus.DEFEATED):
 			players.erase(player)
 func get_players():
-	return players
+	var not_defeated = []
+	for player in players:
+		if !is_instance_valid(player):
+			return not_defeated
+		if player.status != PlayerStatus.DEFEATED:
+			not_defeated.append(player)
+	return not_defeated
 func get_player_size():
-	return players.size()
+	return get_players().size()
 func get_player_by_array_index(index: int):
-	return players[index]
+	return get_players()[index]
+func get_player(index: int):
+	for player in players:
+		if player.index == index:
+			return player
+func get_player_by_name(name: String):
+	for player in players:
+		if player.player_name == name:
+			return player
+func get_bots():
+	var bots = []
+	for player in get_players():
+		if(player.is_bot):
+			bots.append(player)
+	return bots
+func clear():
+	players = []
