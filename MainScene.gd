@@ -35,7 +35,7 @@ func _process(delta):
 
 			var player = Player.get_default()
 			player[Player.Index] = current_index
-			player[Player.Name] = str(randi()) + "号老鸭"
+			player[Player.Name] = Global.bot_names[current_index -1]
 			player[Player.Status] = Player.PlayerStatus.WAITING
 			player[Player.IsBot] = true
 			var board = add_player(player)
@@ -71,6 +71,7 @@ func try_end_game():
 func game_start():
 	print("game start")
 	#重要！否则重复调用
+	$WaitPlayerTimer.stop()
 	start_wait_time -=1
 	#设置全局状态为PLAYING
 	Global.status = Global.WorldStatus.PLAYING
@@ -92,13 +93,6 @@ func game_start():
 	
 	#棋盘生成完毕后，启动回合计时器
 	start_turn_timer()
-
-	#chess_board1 = chess_board_scene.instance()
-	#chess_board2 = chess_board_scene.instance()
-	#add_child(chess_board1)
-	#add_child(chess_board2)
-	#chess_board1.position = Vector2(64,32)
-	#chess_board2.position = Vector2(256,32)
 #切换到玩家的回合
 func set_player_turn(board):
 	board.status = Player.PlayerStatus.PLAYING
@@ -147,6 +141,9 @@ func _on_WsController_on_hit_pos(player_name, pos, index):
 	var board = Player.get_player(index)
 	var player = Player.get_player_by_name(player_name)
 	var can_opt = true
+	if !board:
+		alert("输入的编号错误 :" + str(index))
+		return
 	
 	if !player:
 		alert(player_name + " 你还没加入游戏")
@@ -178,15 +175,26 @@ func hit(board, pos):
 	
 #加入玩家
 func _on_WsController_on_player_in(player_name):
-	#
+	#不能超过最大玩家数
 	
+	if max_player_count < Player.players.size():
+		alert("人数已经够了")
+		return
+		
 	#用名字创建玩家
 	var new_player = {Player.Name: player_name, Player.Status: Player.PlayerStatus.WAITING}
 	var board = add_player(new_player)
 	board.hide()
+	
+	#创建完成后判断能否开始游戏
+	if max_player_count == Player.players.size():
+		alert("马上开始！")
+		game_start()
 func alert(msg: String):
 	print("WARN!!! ", msg)
-	
+	$HUD/GameOver.text = msg
+	yield(get_tree().create_timer(4), "timeout")
+	$HUD/GameOver.hide()
 	pass
 func restart():
 	get_tree().reload_current_scene()

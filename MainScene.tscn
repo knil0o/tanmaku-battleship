@@ -74,8 +74,9 @@ script = ExtResource( 1 )
 chess_board_scene = ExtResource( 4 )
 player_scene = SubResource( 9 )
 controller = ExtResource( 2 )
-start_wait_time = 2
+start_wait_time = 20
 cheess_board_offset = 400.0
+max_player_count = 2
 
 [node name="WaitPlayerTimer" type="Timer" parent="." groups=["start"]]
 autostart = true

@@ -87,6 +87,13 @@ func _ready():
 
 #攻击一个位置范围,返回剩余位置
 func hit(hit_pos: Vector2):
+	# 不能超过位置
+	if hit_pos.x > chess_board_scale.x || hit_pos.y > chess_board_scale.y:
+		return
+	# 不能攻击已攻击过的位置
+	if hit_positions.has(hit_pos):
+		return 	
+	
 	if Global.status == Global.WorldStatus.END:
 		return false
 	for ship_pos in ship_positions:

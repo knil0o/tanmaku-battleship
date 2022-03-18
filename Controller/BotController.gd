@@ -22,7 +22,9 @@ func get_hit_pos(target):
 	for ship in ships:
 		for hit in hits:
 			var surrounds = target.get_surrounds(hit)
-			if ship == hit && target.get_surrounds(hit).size() > 0:
+			if ship == hit:
+				print("ship is hit:", ship == hit, "ship ", ship, "hit ", hit)
+			if (ship.x == hit.x || ship.y == hit.y) && surrounds.size() > 0:
 				hitables.append_array(surrounds)
 	#随机取一个位置
 	print(target.player_name, " surrounds: ", hitables)
@@ -36,7 +38,10 @@ func get_hit_pos(target):
 	return hitables[randi() % hitables.size()]
 	
 func hit(source):
+
 	var target = get_whom(source);
+	if !target:
+		return
 	var hits = target.hit_positions
 	var to_hit = get_hit_pos(target)
 	if !to_hit:
