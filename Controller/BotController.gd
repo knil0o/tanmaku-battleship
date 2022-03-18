@@ -4,28 +4,43 @@ signal on_bot_hit(source, index, pos)
 var timeout = 5
 func _ready():
 	pass # Replace with function body.
-
-
-
-func hit(source):
-	var target = null
-	var retry = 100
-	while target == null || retry > 0:
-		retry -=1		
-		var players = Player.get_players()
-		var availables = []
-		for p in players:
-			if(p.index != source.index):
-				availables.append(p)
-		target = availables[random_index(availables.size())]
-	
+func get_whom(source):
+	var players = Player.get_players()
+	var availables = []
+	for p in players:
+		if(p.index != source.index):
+			availables.append(p)
+	randomize()
+	if availables.size() == 0:
+		return null
+	return availables[randi() % availables.size()]
+# 随机得到被击中的船的位置
+func get_hit_pos(target):
 	var hits = target.hit_positions
-	var to_hit = target.rand_pos()
-	if(hits.size() > 0):
-		var one_hit = hits[random_index(hits.size())]
-		var surrounds = source.get_surrounds(one_hit)
-		if(surrounds.size() > 0):
-			to_hit = surrounds[random_index(surrounds.size())]
+	var ships = target.ship_positions
+	var hitables = []
+	for ship in ships:
+		for hit in hits:
+			var surrounds = target.get_surrounds(hit)
+			if ship == hit && target.get_surrounds(hit).size() > 0:
+				hitables.append_array(surrounds)
+	#随机取一个位置
+	print(target.player_name, " surrounds: ", hitables)
+	randomize()
+
+	if hitables.size() == 0:
+		return target.rand_pos()
+	if target.ship_positions.size() == 0:
+		return null
+		
+	return hitables[randi() % hitables.size()]
+	
+func hit(source):
+	var target = get_whom(source);
+	var hits = target.hit_positions
+	var to_hit = get_hit_pos(target)
+	if !to_hit:
+		return
 	emit_signal("on_bot_hit", source, target.index, to_hit)	
 func random_index(size: int):
 	randomize()

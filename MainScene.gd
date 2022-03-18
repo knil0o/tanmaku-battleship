@@ -3,7 +3,6 @@ extends Node
 # var a = 2
 # var b = "text"
 #定义发送的signal
-signal click_pos(event)
 export(PackedScene) var chess_board_scene
 export(PackedScene) var player_scene
 export(PackedScene) var controller
@@ -40,7 +39,6 @@ func _process(delta):
 			player[Player.Status] = Player.PlayerStatus.WAITING
 			player[Player.IsBot] = true
 			var board = add_player(player)
-			print("cpu player:", player, "board status:", board.status)
 			board.hide()
 			
 			print("加入玩家",board)
@@ -180,12 +178,15 @@ func hit(board, pos):
 	
 #加入玩家
 func _on_WsController_on_player_in(player_name):
+	#
+	
 	#用名字创建玩家
 	var new_player = {Player.Name: player_name, Player.Status: Player.PlayerStatus.WAITING}
 	var board = add_player(new_player)
 	board.hide()
 func alert(msg: String):
 	print("WARN!!! ", msg)
+	
 	pass
 func restart():
 	get_tree().reload_current_scene()

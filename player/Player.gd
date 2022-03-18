@@ -54,3 +54,27 @@ func get_bots():
 	return bots
 func clear():
 	players = []
+#根据剩余格子数对比
+static func compare_position_count(a, b) -> bool:
+	if(!a.ship_positions):
+		return false
+	if(!b.ship_positions):
+		return true	
+	
+	return a.ship_positions.size() < b.ship_positions.size()
+#随机排序	
+static func random_compare(a,b) -> bool:
+	randomize()
+	return (randi() % 100) % 3 == 1
+func sort_by_positions():
+	var players = get_players()
+	print("original sort:", players[0].ship_positions, players[players.size()-1].ship_positions)
+	players.sort_custom(Node, "compare_position_count")
+	print("sorted: ", players[0].ship_positions, players[players.size()-1].ship_positions)
+	return players
+func sort_random():
+	var players = get_players()
+	print("original sort:", players[0].index, players[players.size()-1].index)
+	players.sort_custom(Node, "random_compare")
+	print("sorted: ", players[0].index, players[players.size()-1].index)
+	return players	
