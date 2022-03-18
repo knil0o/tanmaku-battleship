@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://MainScene.gd" type="Script" id=1]
 [ext_resource path="res://Controller/BiliController.tscn" type="PackedScene" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://images/1x1ship.png" type="Texture" id=7]
 [ext_resource path="res://ship/1x1ship_single.png" type="Texture" id=8]
 [ext_resource path="res://Controller/BotController.tscn" type="PackedScene" id=9]
+[ext_resource path="res://images/bg.jpg" type="Texture" id=10]
 
 [sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 7 )
@@ -76,7 +77,13 @@ player_scene = SubResource( 9 )
 controller = ExtResource( 2 )
 start_wait_time = 20
 cheess_board_offset = 400.0
-max_player_count = 2
+max_player_count = 4
+
+[node name="Bg" type="Sprite" parent="."]
+light_mask = 0
+position = Vector2( 648, 288 )
+scale = Vector2( 1.54945, 1.28622 )
+texture = ExtResource( 10 )
 
 [node name="WaitPlayerTimer" type="Timer" parent="." groups=["start"]]
 autostart = true
