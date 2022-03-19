@@ -12,6 +12,7 @@ signal on_msg_expire
 signal on_hit_pos(player_name, pos, target)
 signal on_player_in(player_name)
 signal on_error(message)
+signal on_force_start
 func _ready():
 	# Connect base signals to get notified of connection open, close, and errors.
 	_client.connect("connection_closed", self, "_closed")
@@ -58,6 +59,8 @@ func _on_data():
 
 	if(content == "加入" || content == "jiaru"):
 		emit_signal("on_player_in", player_name)
+	elif(content == "结束" || content =="jieshu" || content=="jiesu"):
+		emit_signal("on_force_start")
 	elif(is_pos):
 		var pos_arr = content.split(",")
 		if(pos_arr.size() < 3):

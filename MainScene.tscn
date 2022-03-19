@@ -77,12 +77,12 @@ player_scene = SubResource( 9 )
 controller = ExtResource( 2 )
 start_wait_time = 20
 cheess_board_offset = 400.0
-max_player_count = 4
+max_player_count = 3
 
 [node name="Bg" type="Sprite" parent="."]
 light_mask = 0
-position = Vector2( 648, 288 )
-scale = Vector2( 1.54945, 1.28622 )
+position = Vector2( 640, 372 )
+scale = Vector2( 1.29162, 0.77001 )
 texture = ExtResource( 10 )
 
 [node name="WaitPlayerTimer" type="Timer" parent="." groups=["start"]]
@@ -106,6 +106,7 @@ rotation = -0.810841
 
 [connection signal="timeout" from="WaitPlayerTimer" to="." method="_on_WaitPlayerTimer_timeout"]
 [connection signal="timeout" from="TurnTimer" to="." method="_on_TurnTimer_timeout"]
+[connection signal="on_force_start" from="WsController" to="." method="_on_WsController_on_force_start"]
 [connection signal="on_hit_pos" from="WsController" to="." method="_on_WsController_on_hit_pos"]
 [connection signal="on_player_in" from="WsController" to="." method="_on_WsController_on_player_in"]
 [connection signal="on_bot_hit" from="BotController" to="." method="_on_BotController_on_bot_hit"]

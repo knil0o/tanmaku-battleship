@@ -78,3 +78,8 @@ func sort_random():
 	players.sort_custom(Node, "random_compare")
 	print("sorted: ", players[0].index, players[players.size()-1].index)
 	return players	
+func is_all_bot():
+	var all_bot = true
+	for player in players:
+		all_bot = (player.is_bot && all_bot)
+	return all_bot

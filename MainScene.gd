@@ -211,3 +211,8 @@ func _on_BotController_on_bot_hit(source, index, pos):
 	
 	next_turn()
 	pass # Replace with function body.
+
+
+func _on_WsController_on_force_start():
+	if(Player.is_all_bot()):
+		get_tree().reload_current_scene()
